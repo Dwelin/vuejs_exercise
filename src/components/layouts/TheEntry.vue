@@ -3,7 +3,7 @@
     <!-- 已登录，显示用户信息 -->
     <ul v-if="auth" class="nav navbar-nav github-login">
       <li>
-        <a href="javascript:;">
+        <a v-dropdown href="javascript:;">
           <span v-if="user">
             <img v-if="user.avatar" :src="user.avatar" class="avatar-topnav" />
             <span v-if="user.name">{{ user.name }}</span>
@@ -13,7 +13,9 @@
         </a>
         <ul class="dropdown-menu">
           <li>
-            <a href="#"><i class="fa fa-sign-out text-md"></i>退出</a>
+            <a href="javascript:;" @click="logout"
+              ><i class="fa fa-sign-out text-md"></i>退出</a
+            >
           </li>
         </ul>
       </li>
@@ -39,6 +41,17 @@ export default {
   computed: {
     // 使用对象展开运算符，将 mapState 对象混入到计算属性之中
     ...mapState(["auth", "user"]),
+  },
+  // 添加 methods 选项，并添加 logout 方法
+  methods: {
+    logout() {
+      this.$swal({
+        text: "你确定要退出吗？",
+        confirmButtonText: "退出",
+      }).then((res) => {
+        this.$store.dispatch("logout");
+      });
+    },
   },
 };
 </script>
