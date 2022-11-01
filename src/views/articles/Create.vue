@@ -15,11 +15,7 @@
               />
             </div>
             <div class="form-group">
-              <textarea
-                v-validator.required="{ title: '内容' }"
-                class="form-control"
-                placeholder="请使用 Markdown 格式书写 ;-)，代码片段黏贴时请注意使用高亮语法。"
-              ></textarea>
+              <textarea id="editor"> </textarea>
             </div>
             <br />
             <div class="form-group">
@@ -33,13 +29,16 @@
 </template>
 
 <script>
-import SimpleMDE from "simplemde";
+// import SimpleMDE from "simplemde";
+import SimpleMDE from "simplemde/dist/simplemde.min.js";
+// 引入 highlight.js 的默认值
+import hljs from "highlight.js";
+// 添加全局变量
+window.hljs = hljs;
 
 export default {
   name: "Create",
-  /*
   mounted() {
-    // 创建一个 SimpleMDE 的实例
     const simplemde = new SimpleMDE({
       // 要绑定的 textarea 元素
       element: document.querySelector("#editor"),
@@ -60,9 +59,7 @@ export default {
         codeSyntaxHighlighting: true,
       },
     });
-
   },
-  */
 };
 </script>
 
