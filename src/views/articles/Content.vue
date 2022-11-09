@@ -24,9 +24,9 @@
 // import SimpleMDE from "simplemde";
 import SimpleMDE from "simplemde/dist/simplemde.min.js";
 import hljs from "highlight.js";
-import emoji from "node-emoji/lib/emoji.js";
-// import emoji from "node-emoji/index";
-// import emoji from "node-emoji";
+import Emoji from "node-emoji/lib/emoji";
+// 引入 mapState 辅助函数
+import { mapState } from "vuex";
 
 export default {
   // 添加相关数据
@@ -35,7 +35,13 @@ export default {
       title: "", // 文章标题
       content: "", // 文章内容
       date: "", // 创建时间
+      uid: 1, // 用户ID
     };
+  },
+  // 添加计算属性
+  computed: {
+    // 将仓库的以下状态混入到计算属性之中
+    ...mapState(["auth", "user"]),
   },
   // 在实例创建完成后
   created() {
@@ -45,12 +51,14 @@ export default {
     const article = this.$store.getters.getArticleById(articleId);
 
     if (article) {
-      let { title, content, date } = article;
+      let { uid, title, content, date } = article;
 
+      // 设置实例的 uid
+      this.uid = uid;
       this.title = title;
       // 使用编辑器的 markdown 方法将 Markdown 内容转成 HTML
       this.content = SimpleMDE.prototype.markdown(
-        emoji.emojify(content, (name) => name)
+        Emoji.emojify(content, (name) => name)
       );
       this.date = date;
 
@@ -62,6 +70,31 @@ export default {
         });
       });
     }
+
+    // 设置实例的 articleId
+    this.articleId = articleId;
+  },
+  // 添加方法
+  methods: {
+    // 编辑文章
+    editArticle() {
+      // 点击编辑文章图标，跳到编辑文章页面，并附带当前文章 ID
+      this.$router.push({
+        name: "Edit",
+        params: { articleId: this.articleId },
+      });
+    },
+    // 删除文章
+    deleteArticle() {
+      this.$swal({
+        text: "你确定要删除此内容吗?",
+        confirmButtonText: "删除",
+      }).then((res) => {
+        if (res.value) {
+          this.$store.dispatch("post", { articleId: this.articleId });
+        }
+      });
+    },
   },
 };
 </script>
